@@ -2,24 +2,42 @@
 
 namespace App\Entity;
 
-use App\Repository\MembreRepository;
+
+use ApiPlatform\Metadata\Get;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\MembreRepository;
+use ApiPlatform\Metadata\GetCollection;
+use Symfony\Component\Serializer\Annotation\Groups; // permet de préciser les attributs exposer à l'API
+use ApiPlatform\Metadata\ApiResource; // importation de la class ApiResource
 
 #[ORM\Entity(repositoryClass: MembreRepository::class)]
+// j'annote l'entité Membre afin de l'exposer en tant qu'API
+// Cette route permet d'acceder à l'ensemble des routes disponibles nativement
+#[ApiResource(
+    operations: [
+        // expose uniquement les route /GET de l'API 
+        new Get(normalizationContext: ['groups' => ['membre:item']]),
+        new GetCollection(normalizationContext: ['groups' => ['membre:list']]),
+    ]
+)]
 class Membre
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups('membre:list', 'membre:item')]
     private ?int $id = null;
 
     #[ORM\Column(length: 20)]
+    #[Groups('membre:list', 'membre:item')]
     private ?string $title = null;
 
     #[ORM\Column(length: 100)]
+    #[Groups('membre:list', 'membre:item')]
     private ?string $last = null;
 
     #[ORM\Column(length: 50)]
+    #[Groups('membre:list', 'membre:item')]
     private ?string $first = null;
 
     #[ORM\Column(length: 255)]
